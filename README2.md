@@ -1,0 +1,1 @@
+In this repository, you will find a code linked to the replication work of  *Korpela et al. Proceedings B 2014* , in this one, we modify the models used by the authors in order to try new hypotheses  and draw new conclusions. 
