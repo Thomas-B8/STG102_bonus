@@ -4,7 +4,7 @@
 # name = "Bonus work : modify models"
 
 # this code is constituted by a "patchwork" of previous code used in the replication part,
-# with altertaions to create the new models 
+# with alterations to create the new models 
 
 
 # packages 
@@ -443,7 +443,7 @@ write.csv (simulations, "../data/simulations_indicators_bonus.csv",row.names=T,q
 
 # III Figures : direct and delayed density dependance + s-index 
 
-simulations <- read.csv("simulations_indicators_bonus.csv",sep=",", header=T, dec=".", stringsAsFactors=FALSE)
+simulations <- read.csv("../data/simulations_indicators_bonus.csv",sep=",", header=T, dec=".", stringsAsFactors=FALSE)
 
 # data cleaning 
 simulations$scenario <- as.integer(simulations$scenario)
@@ -619,7 +619,7 @@ dev.off()
 # IV simulations figure (vole density)
 
 # data importation 
-Vole <- read.csv("vole_density_simulations_bonus.csv",sep=",", header=T, dec=".", stringsAsFactors=FALSE)
+Vole <- read.csv("../data/vole_density_simulations_bonus.csv",sep=",", header=T, dec=".", stringsAsFactors=FALSE)
 
 # S1 - North 
 
