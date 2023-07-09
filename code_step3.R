@@ -1,11 +1,12 @@
 # author = "Besognet Thomas"
 # date = " 30/06/23" 
 # project = "Korpela et al. Proceedings B Replication"
-# name = "Bonus work : modify models"
+# name = "Supplemental work : modify models"
 
 # this code is constituted by a "patchwork" of previous code used in the replication part,
 # with alterations to create the new models 
 
+# step 3
 
 # packages 
 install.packages("dplyr")
@@ -116,8 +117,8 @@ for (zone in 1:3){
 }
 
 # we can register our data frame in csv 
-write.csv (estimators_vole, "parameters_vole_bonus.csv", row.names = T, quote = F)
-write.csv (estimators_predators, "parameters_predators_bonus.csv", row.names = T, quote = F)
+write.csv (estimators_vole, "../data_supp/parameters_vole_step3.csv", row.names = T, quote = F)
+write.csv (estimators_predators, "../data_supp/parameters_predators_step3.csv", row.names = T, quote = F)
 
 #----------------------------------------------------------------------------------------------------------
 
@@ -127,7 +128,7 @@ write.csv (estimators_predators, "parameters_predators_bonus.csv", row.names = T
 
 # simulation's indicators 
 simulations <-data.frame(matrix(0,24,10)) 
-names(simulations) <- c("scenario","zone","direct density dependance","delayed density dependance","s-index","min_s","max_s","seasonality","min_n","max_n")
+names(simulations) <- c("scenario","zone","direct density dependence","delayed density dependence","s-index","min_s","max_s","seasonality","min_n","max_n")
 
 # vole density 
 Vole <- data.frame(matrix(0,2000,24)) 
@@ -159,8 +160,8 @@ names(Yt_2) <- c("1n","1e","1o","2n","2e","2o","3n","3e","3o","4n","4e","4o","5n
 
 
 # We open the parameters estimated previously and create variable to stock them
-parameters <- read.csv("parameters_vole_bonus.csv", sep=",", header=T, dec=".",stringsAsFactors=FALSE)
-parameters_pred <- read.csv("parameters_predators_bonus.csv", sep=",", header=T, dec=".",stringsAsFactors=FALSE)
+parameters <- read.csv("../data_supp/parameters_vole_step3.csv", sep=",", header=T, dec=".",stringsAsFactors=FALSE)
+parameters_pred <- read.csv("../data_supp/parameters_predators_step3.csv", sep=",", header=T, dec=".",stringsAsFactors=FALSE)
 
 
 # Now we can do the simulations for each zone (3) and each scenario (8) , ie 24 simulations 
@@ -405,14 +406,14 @@ for (scenario in 1:8){
       # end of the 1000 years loop 
     }
     
-    # calcul : from seasonal density dependance to annual density dependancd 
-    Density_dependance_1 <- lm(formula = Yt_1[,sim] ~ Vole_autumn_1[,sim] +  Vole_autumn_2[,sim] )
-    Density_dependance_2 <- lm(formula = Yt_2[,sim] ~ Vole_spring[,sim] +  Vole_spring_1[,sim] )
+    # calcul : from seasonal density dependence to annual density dependancd 
+    Density_dependence_1 <- lm(formula = Yt_1[,sim] ~ Vole_autumn_1[,sim] +  Vole_autumn_2[,sim] )
+    Density_dependence_2 <- lm(formula = Yt_2[,sim] ~ Vole_spring[,sim] +  Vole_spring_1[,sim] )
     
-    B1 <- Density_dependance_1$coefficient[2]
-    C1 <- Density_dependance_1$coefficient[3]
-    B2 <- Density_dependance_2$coefficient[2]
-    C2 <- Density_dependance_2$coefficient[3]
+    B1 <- Density_dependence_1$coefficient[2]
+    C1 <- Density_dependence_1$coefficient[3]
+    B2 <- Density_dependence_2$coefficient[2]
+    C2 <- Density_dependence_2$coefficient[3]
     
     DR <- B1 + B2 + B2*B1 - 0.20 
     DL <- C1 + C2 + C2*B1 + B2*C1 
@@ -436,37 +437,37 @@ for (scenario in 1:8){
 }
 
 # we register our results 
-write.csv (Vole, "../data/vole_density_simulations_bonus.csv", row.names = T, quote = F) 
-write.csv (simulations, "../data/simulations_indicators_bonus.csv",row.names=T,quote=F)
+write.csv (Vole, "../data_supp/vole_density_simulations_step3.csv", row.names = T, quote = F) 
+write.csv (simulations, "../data_supp/simulations_indicators_step3.csv",row.names=T,quote=F)
 
 #--------------------------------------------------------------------------------------------------------
 
-# III Figures : direct and delayed density dependance + s-index 
+# III Figures : direct and delayed density dependence + s-index 
 
-simulations <- read.csv("../data/simulations_indicators_bonus.csv",sep=",", header=T, dec=".", stringsAsFactors=FALSE)
+simulations <- read.csv("../data_supp/simulations_indicators_step3.csv",sep=",", header=T, dec=".", stringsAsFactors=FALSE)
 
 # data cleaning 
 simulations$scenario <- as.integer(simulations$scenario)
-simulations$direct.density.dependance_p <- simulations$direct.density.dependance+1
+simulations$direct.density.dependence_p <- simulations$direct.density.dependence+1
 
 simulations_north <- filter(simulations,zone==1)
 simulations_east <- filter(simulations,zone==2)
 simulations_west <- filter(simulations,zone==3)
 
-# A) density dependance 
+# A) density dependence 
 
 # A.1 north 
 
 a1 <- ggplot(simulations_north) +
-  geom_point(size=6,aes(x = direct.density.dependance_p,y = delayed.density.dependance,color = factor(scenario)))+
+  geom_point(size=6,aes(x = direct.density.dependence_p,y = delayed.density.dependence,color = factor(scenario)))+
   scale_color_manual(name="scenario",values=c('black','pink','red',"yellow","orange","lightseagreen","darkblue","cornsilk4"))+
   geom_function(fun=function(x) -x^2 / 4, xlim=c(-2, 2))+
   geom_segment(aes(x = -2, y = -1, xend = 0, yend = 1))+
   geom_segment(aes(x = 0, y = 1, xend = 2, yend = -1))+
   geom_segment(aes(x = -2, y = -1, xend = 2, yend = -1))+
   coord_cartesian(xlim = c(-2, 2), ylim = c(-1, 1))+
-  ggtitle("density dependance north") +
-  xlab("direct density dependance+1") + ylab("delayed density dependance")+ theme_classic() + 
+  ggtitle("density dependence north") +
+  xlab("direct density dependence+1") + ylab("delayed density dependence")+ theme_classic() + 
   theme(plot.title = element_text(size=18, face="bold",hjust = 0.5),
         axis.title.x = element_text( size=18, face="bold"),
         axis.title.y = element_text( size=18, face="bold"),
@@ -483,15 +484,15 @@ a1
 # A.2 west  
 
 a2 <- ggplot(simulations_west) +
-  geom_point(size=6,aes(x =direct.density.dependance_p,y =delayed.density.dependance,color = factor(scenario)))+
+  geom_point(size=6,aes(x =direct.density.dependence_p,y =delayed.density.dependence,color = factor(scenario)))+
   scale_color_manual(name="scenario",values=c('black','pink','red',"yellow","orange","lightseagreen","darkblue","cornsilk4"))+
   geom_function(fun=function(x) -x^2 / 4, xlim=c(-2, 2))+
   geom_segment(aes(x = -2, y = -1, xend = 0, yend = 1))+
   geom_segment(aes(x = 0, y = 1, xend = 2, yend = -1))+
   geom_segment(aes(x = -2, y = -1, xend = 2, yend = -1))+
   coord_cartesian(xlim = c(-2, 2), ylim = c(-1, 1))+
-  ggtitle("density dependance west") +
-  xlab("direct density dependance+1") + ylab("delayed density dependance")+ theme_classic()+
+  ggtitle("density dependence west") +
+  xlab("direct density dependence+1") + ylab("delayed density dependence")+ theme_classic()+
   theme(plot.title = element_text(size=18, face="bold",hjust = 0.5),
         axis.title.x = element_text( size=18, face="bold"),
         axis.title.y = element_text( size=18, face="bold"),
@@ -504,15 +505,15 @@ a2
 # A.3 east 
 
 a3 <- ggplot(simulations_east) +
-  geom_point(size=6,aes(x =direct.density.dependance_p,y =delayed.density.dependance,color = factor(scenario)))+
+  geom_point(size=6,aes(x =direct.density.dependence_p,y =delayed.density.dependence,color = factor(scenario)))+
   scale_color_manual(name="scenario",values=c('black','pink','red',"yellow","orange","lightseagreen","darkblue","cornsilk4"))+
   geom_function(fun=function(x) -x^2 / 4, xlim=c(-2, 2))+
   geom_segment(aes(x = -2, y = -1, xend = 0, yend = 1))+
   geom_segment(aes(x = 0, y = 1, xend = 2, yend = -1))+
   geom_segment(aes(x = -2, y = -1, xend = 2, yend = -1))+
   coord_cartesian(xlim = c(-2, 2), ylim = c(-1, 1))+
-  ggtitle("density dependance east") +
-  xlab("direct density dependance+1") + ylab("delayed density dependance")+ theme_classic()+
+  ggtitle("density dependence east") +
+  xlab("direct density dependence+1") + ylab("delayed density dependence")+ theme_classic()+
   theme(plot.title = element_text(size=18, face="bold",hjust = 0.5),
         axis.title.x = element_text( size=18, face="bold"),
         axis.title.y = element_text( size=18, face="bold"),
@@ -530,13 +531,13 @@ A <- plot_grid(a1+ theme(legend.position = 'none'),a2,a3, legend_a ,labels=c("1"
 
 A
 
-pdf("../Figures/graph_bonus_triangle.pdf",  
-    width = 12, height = 15, 
+pdf("../Figures_supp/graph_triangle_step3.pdf",  
+    width = 16, height = 12, 
     bg = "white",         
     colormodel = "cmyk")
 
 # Creating a plot
-plot(C)
+plot(A)
 
 # Closing the graphical device
 dev.off() 
@@ -603,13 +604,13 @@ b3
 B <- plot_grid(b1,b2,b3, labels=c("1", "2","3"), ncol = 3, nrow = 1)
 B
 
-pdf("../Figures/graph_bonus_s_index.pdf",  
-    width = 6, height = 12, 
+pdf("../Figures_supp/graph_s_index_step3.pdf",  
+    width = 12, height = 6, 
     bg = "white",         
     colormodel = "cmyk")
 
 # Creating a plot
-plot(C)
+plot(B)
 
 # Closing the graphical device
 dev.off() 
@@ -619,7 +620,7 @@ dev.off()
 # IV simulations figure (vole density)
 
 # data importation 
-Vole <- read.csv("../data/vole_density_simulations_bonus.csv",sep=",", header=T, dec=".", stringsAsFactors=FALSE)
+Vole <- read.csv("../data_supp/vole_density_simulations_step3.csv",sep=",", header=T, dec=".", stringsAsFactors=FALSE)
 
 # S1 - North 
 
@@ -837,7 +838,7 @@ a8_acf
 A <- plot_grid(s1n_graph,a1_acf,s2n_graph,a2_acf,s3n_graph,a3_acf,s4n_graph,a4_acf,s5n_graph,a5_acf,s6n_graph,a6_acf,s7n_graph,a7_acf,s8n_graph,a8_acf, labels=c("1", "2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"), ncol = 2, nrow = 8)
 
 # Opening the graphic device 
-pdf("../Figures/sim_bonus_north.pdf",  
+pdf("../Figures_supp/sim_north_step3.pdf",  
     width = 8, height = 18, 
     bg = "white",         
     colormodel = "cmyk")
@@ -1064,7 +1065,7 @@ a8_acf
 B <- plot_grid(s1e_graph,a1_acf,s2e_graph,a2_acf,s3e_graph,a3_acf,s4e_graph,a4_acf,s5e_graph,a5_acf,s6e_graph,a6_acf,s7e_graph,a7_acf,s8e_graph,a8_acf, labels=c("1", "2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"), ncol = 2, nrow = 8)
 
 # Opening the graphic device 
-pdf("../Figures/sim_bonus_east.pdf",  
+pdf("../Figures_supp/sim_east_step3.pdf",  
     width = 8, height = 18, 
     bg = "white",         
     colormodel = "cmyk")
@@ -1288,7 +1289,7 @@ a8_acf
 
 C <- plot_grid(s1o_graph,a1_acf,s2o_graph,a2_acf,s3o_graph,a3_acf,s4o_graph,a4_acf,s5o_graph,a5_acf,s6o_graph,a6_acf,s7o_graph,a7_acf,s8o_graph,a8_acf, labels=c("1", "2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"), ncol = 2, nrow = 8)
 # Opening the graphic device 
-pdf("../Figures/sim_bonus_west.pdf",  
+pdf("../Figures_supp/sim_west_step3.pdf",  
     width = 8, height = 18, 
     bg = "white",         
     colormodel = "cmyk")
